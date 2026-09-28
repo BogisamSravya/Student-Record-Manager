@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student Record Manager - A modern, clean web application to manage, validate, and store student records using HTML5, CSS3, and Vanilla JavaScript.">
+  <title>Student Record Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts: Inter for modern, clean typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="header-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+        </div>
+        <div class="header-text">
+          <h1 id="appTitle">Student Record Manager</h1>
+          <p class="subtitle" id="appSubtitle">Manage, validate, and store student records easily</p>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="badge-label">Total Records</span>
+        <span class="badge-count" id="totalRecordsBadge">0</span>
+      </div>
+    </header>
+
+    <!-- Global Alert / Notification Toast Message -->
+    <div id="alertContainer" class="alert-container" aria-live="polite">
+      <div id="alertBox" class="alert-box hidden">
+        <span id="alertIcon" class="alert-icon"></span>
+        <span id="alertMessage" class="alert-message"></span>
+        <button id="alertCloseBtn" class="alert-close" aria-label="Close notification">&times;</button>
+      </div>
+    </div>
+
+    <!-- Navigation / Tabs -->
+    <nav class="nav-tabs" aria-label="Main Navigation">
+      <button id="tabAddStudent" class="tab-btn active" onclick="switchTab('add')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add Student</span>
+      </button>
+      <button id="tabViewRecords" class="tab-btn" onclick="switchTab('records')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <span>Student Records</span>
+        <span class="tab-badge" id="tabCountBadge">0</span>
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Section 1: Add Student Form -->
+      <section id="sectionAddStudent" class="content-section active">
+        <div class="card form-card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Enroll New Student</h2>
+              <p class="card-description">Please fill in the information below. All fields are required.</p>
+            </div>
+            <button type="button" class="btn-demo" id="btnFillDemo" onclick="fillDemoData()" title="Fill with example student data">
+              Quick Fill Demo
+            </button>
+          </div>
+
+          <form id="studentForm" novalidate onsubmit="addStudent(event)">
+            <!-- Student ID -->
+            <div class="form-group">
+              <label for="studentId">
+                Student ID <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="number" 
+                  id="studentId" 
+                  name="studentId" 
+                  placeholder="e.g., 101" 
+                  min="1"
+                  required
+                >
+              </div>
+              <span class="error-message" id="idError"></span>
+            </div>
+
+            <!-- Student Name -->
+            <div class="form-group">
+              <label for="studentName">
+                Student Name <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="text" 
+                  id="studentName" 
+                  name="studentName" 
+                  placeholder="e.g., Sravya" 
+                  required
+                >
+              </div>
+              <span class="error-message" id="nameError"></span>
+            </div>
+
+            <!-- Age -->
+            <div class="form-group">
+              <label for="studentAge">
+                Age <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="number" 
+                  id="studentAge" 
+                  name="studentAge" 
+                  placeholder="e.g., 20" 
+                  min="1"
+                  required
+                >
+              </div>
+              <span class="error-message" id="ageError"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="studentEmail">
+                Email Address <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input 
+                  type="email" 
+                  id="studentEmail" 
+                  name="studentEmail" 
+                  placeholder="e.g., sravya@gmail.com" 
+                  required
+                >
+              </div>
+              <span class="error-message" id="emailError"></span>
+            </div>
+
+            <!-- Course -->
+            <div class="form-group">
+              <label for="studentCourse">
+                Course <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <select id="studentCourse" name="studentCourse" required>
+                  <option value="" disabled selected>Select a course...</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Data Science">Data Science</option>
+                  <option value="Electronics & Communication">Electronics & Communication</option>
+                  <option value="Electrical Engineering">Electrical Engineering</option>
+                  <option value="Mechanical Engineering">Mechanical Engineering</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="Business Administration">Business Administration</option>
+                  <option value="Cyber Security">Cyber Security</option>
+                </select>
+              </div>
+              <span class="error-message" id="courseError"></span>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="submit" id="btnAddStudent" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                <span>Add Student</span>
+              </button>
+              <button type="button" id="btnClearForm" class="btn btn-secondary" onclick="clearForm()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+                <span>Reset Form</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Section 2: Student Records Table -->
+      <section id="sectionViewRecords" class="content-section hidden">
+        <div class="card table-card">
+          <div class="table-card-header">
+            <div>
+              <h2 class="card-title">Enrolled Student Records</h2>
+              <p class="card-description">All student data loaded securely from browser storage.</p>
+            </div>
+            <!-- Search & Actions -->
+            <div class="table-controls">
+              <div class="search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input 
+                  type="text" 
+                  id="searchInput" 
+                  placeholder="Search by ID, Name or Course..." 
+                  oninput="handleSearch()"
+                >
+              </div>
+              <button 
+                type="button" 
+                class="btn-outline-danger" 
+                id="btnClearAll" 
+                onclick="clearAllStudents()" 
+                title="Remove all records"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+
+          <!-- Responsive Table Container -->
+          <div class="table-responsive">
+            <table class="students-table" id="studentsTable">
+              <thead>
+                <tr>
+                  <th scope="col" class="th-id">ID</th>
+                  <th scope="col">Name</th>
+                  <th scope="col" class="th-age">Age</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Course</th>
+                  <th scope="col" class="th-action">Action</th>
+                </tr>
+              </thead>
+              <tbody id="studentTableBody">
+                <!-- Records injected dynamically via script.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State (Shown when no students exist) -->
+          <div id="emptyState" class="empty-state hidden">
+            <div class="empty-icon">
+              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <h3 class="empty-title">No student records found.</h3>
+            <p class="empty-subtitle">Get started by enrolling a new student using the "Add Student" form.</p>
+            <button type="button" class="btn btn-primary" onclick="switchTab('add')">
+              Enroll First Student
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Student Record Manager &bull; HTML5 &bull; CSS3 &bull; Vanilla JavaScript &bull; LocalStorage</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
